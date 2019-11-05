@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import axios from 'axios'
+import Users from './components/Users'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    users: [],
+    loading: false
+  }
+
+  async componentDidMount(){
+    this.setState({
+      loading: true
+    })
+
+    const response = await axios.get('https://jsonplaceholder.typicode.com/users')
+    
+    this.setState({
+      users: response.data,
+      loading: false
+    })
+
+  }
+  render (){
+    const allUsers = this.state.users.map((user) =>{
+      return <h1 key={user.id}>{user.name} works at {user.company.name} </h1>
+    })
+    return(
+      <div>
+        <Users data={allUsers} loading={this.state.loading}/>
+      </div>
+    )
+  }
 }
 
 export default App;
+
+//whenever we wanty to fetch data from an api we need to do it inside the componentDidMount
